@@ -1,35 +1,27 @@
 use std::{collections::HashMap, hash::BuildHasherDefault};
 
 use aoc_runner_derive::aoc;
-use bytes::Buf;
 use nohash_hasher::NoHashHasher;
 
 use crate::utils;
 
-pub fn parse_input(input: &str) -> (Vec<u64>, Vec<u64>) {
-    const CAPACITY: usize = 1000;
-    let mut lists = (Vec::with_capacity(CAPACITY), Vec::with_capacity(CAPACITY));
-    let mut input = input.as_bytes();
-    let mut is_right = false;
-    while input.has_remaining() {
-        let byte = input[0];
-        if byte.is_ascii_digit() {
-            let list = if !is_right {
-                &mut lists.0
-            } else {
-                &mut lists.1
-            };
-            list.push(utils::parse_u64_fast(&mut input));
-            is_right = !is_right;
-        } else {
-            input.advance(1);
-        }
+pub const LINES: usize = 1000;
+pub const DIGITS: usize = 5;
+pub const SPACES: usize = 3;
+
+pub fn parse_input(input: &str) -> ([u64; LINES], [u64; LINES]) {
+    let mut lists = ([0u64; LINES], [0u64; LINES]);
+    let input = input.as_bytes();
+    for i in 0..1000 {
+        let offset = i * (DIGITS + SPACES + DIGITS + 1);
+        lists.0[i] = utils::parse_u64_fast::<DIGITS>(&input[offset..]);
+        lists.1[i] = utils::parse_u64_fast::<DIGITS>(&input[offset + DIGITS + SPACES..]);
     }
     lists
 }
 
 // Solution: 2086478
-// Best: ~24 us
+// Best: ~18 us
 #[aoc(day1, part1)]
 pub fn part1(input: &str) -> u64 {
     let mut lists = parse_input(input);
@@ -43,7 +35,7 @@ pub fn part1(input: &str) -> u64 {
 }
 
 // Solution: 24941624
-// Best: ~24 us
+// Best: ~18 us
 #[aoc(day1, part2)]
 pub fn part2(input: &str) -> u64 {
     let lists = parse_input(input);
