@@ -1,5 +1,6 @@
 use bytes::Buf;
 
+#[inline(always)]
 pub fn parse_u64_fast(input: &mut &[u8]) -> u64 {
     let mut result = 0u64;
 

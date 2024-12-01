@@ -29,7 +29,7 @@ pub fn parse_input(input: &str) -> (Vec<u64>, Vec<u64>) {
 }
 
 // Solution: 2086478
-// Best: ~25 us
+// Best: ~24 us
 #[aoc(day1, part1)]
 pub fn part1(input: &str) -> u64 {
     let mut lists = parse_input(input);
@@ -43,7 +43,7 @@ pub fn part1(input: &str) -> u64 {
 }
 
 // Solution: 24941624
-// Best: ~25 us
+// Best: ~24 us
 #[aoc(day1, part2)]
 pub fn part2(input: &str) -> u64 {
     let lists = parse_input(input);
