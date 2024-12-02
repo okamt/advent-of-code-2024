@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     hash::BuildHasherDefault,
-    simd::{num::SimdUint, u32x4, Simd},
+    simd::{num::SimdUint, u32x4, u8x4, Simd},
 };
 
 use aoc_runner_derive::aoc;
@@ -12,12 +12,8 @@ pub const DIGITS: usize = 5;
 pub const SPACES: usize = 3;
 
 pub unsafe fn parse_num(input: *const u8) -> u64 {
-    let mut simd: Simd<u32, 4> = u32x4::from_array([
-        input.read() as u32,
-        input.add(1).read() as u32,
-        input.add(2).read() as u32,
-        input.add(3).read() as u32,
-    ]);
+    let mut simd: Simd<u32, 4> =
+        u8x4::from_slice(unsafe { std::slice::from_raw_parts(input, 4) }).cast();
     simd &= u32x4::splat(0b1111);
     simd *= Simd::from_array([10_000, 1_000, 100, 10]);
     simd.reduce_sum() as u64 + (input.add(4).read() & 0b1111) as u64
