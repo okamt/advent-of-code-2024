@@ -1,16 +1,12 @@
-use std::{
-    collections::HashMap,
-    hash::BuildHasherDefault,
-    simd::{num::SimdUint, u32x4, u8x4, Simd},
-};
+use std::simd::{num::SimdUint, u32x4, u8x4, Simd};
 
 use aoc_runner_derive::aoc;
-use nohash_hasher::NoHashHasher;
 
 pub const LINES: usize = 1000;
 pub const DIGITS: usize = 5;
 pub const SPACES: usize = 3;
 
+#[inline(always)]
 pub unsafe fn parse_num(input: *const u8) -> u64 {
     let mut simd: Simd<u32, 4> =
         u8x4::from_slice(unsafe { std::slice::from_raw_parts(input, 4) }).cast();
@@ -19,6 +15,7 @@ pub unsafe fn parse_num(input: *const u8) -> u64 {
     simd.reduce_sum() as u64 + (input.add(4).read() & 0b1111) as u64
 }
 
+#[inline(always)]
 pub fn parse_input(input: &str) -> ([u64; LINES], [u64; LINES]) {
     let mut lists = ([0u64; LINES], [0u64; LINES]);
     let input = input.as_ptr();
@@ -47,21 +44,17 @@ pub fn part1(input: &str) -> u64 {
 }
 
 // Solution: 24941624
-// Best: ~17 us
+// Best: ~5.5 us
 #[aoc(day1, part2)]
 pub fn part2(input: &str) -> u64 {
     let lists = parse_input(input);
-
-    let mut frequencies: HashMap<_, _, BuildHasherDefault<NoHashHasher<u64>>> =
-        HashMap::with_capacity_and_hasher(1000, BuildHasherDefault::default());
-    lists
-        .1
-        .into_iter()
-        .for_each(|item| *frequencies.entry(item).or_default() += 1);
-
+    let mut frequencies = [0u8; 90_000];
+    for right in lists.1.into_iter() {
+        frequencies[(right - 10_000) as usize] += 1;
+    }
     let mut sum = 0;
     for left in lists.0.into_iter() {
-        sum += left * frequencies.get(&left).copied().unwrap_or(0) as u64;
+        sum += left * frequencies[(left - 10_000) as usize] as u64;
     }
     sum
 }
