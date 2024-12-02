@@ -19,7 +19,7 @@ pub unsafe fn parse_num(input: *const u8) -> u32 {
 pub fn parse_input(input: &str) -> ([u32; LINES], [u32; LINES]) {
     let mut lists = ([0; LINES], [0; LINES]);
     let input = input.as_ptr();
-    for i in 0..1000 {
+    for i in 0..LINES {
         let offset = i * (DIGITS + SPACES + DIGITS + 1);
         unsafe {
             lists.0[i] = parse_num(input.add(offset));
