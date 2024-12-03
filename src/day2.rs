@@ -52,16 +52,13 @@ pub fn parse_input(input: &str) -> [[u8; MAX_LEVELS]; REPORTS] {
 }
 
 // Solution: 326
-// Best:
+// Best: 25 us
 #[aoc(day2, part1)]
 pub fn part1(input: &str) -> usize {
     let reports = parse_input(input);
     let mut valid = REPORTS;
 
-    //let mut i = 0;
     for report in reports.iter() {
-        //let previous_valid = valid;
-
         macro_rules! check {
             ($op:tt) => {
                 let mut index = 2;
@@ -90,23 +87,71 @@ pub fn part1(input: &str) -> usize {
                 check!(<);
             }
         }
-
-        //let is_valid = previous_valid == valid;
-        //println!(
-        //    "{} {} {:?}",
-        //    i,
-        //    if is_valid { "###" } else { "   " },
-        //    report
-        //);
-        //i += 1;
     }
 
     valid
 }
 
-// Solution:
-// Best:
-//#[aoc(day2, part2)]
-//pub fn part2(input: &str) -> u32 {
-//    let lists = parse_input(input);
-//}
+// Solution: 381
+// Best: 60 us
+#[aoc(day2, part2)]
+pub fn part2(input: &str) -> usize {
+    let mut reports = parse_input(input);
+    let mut valid = REPORTS;
+
+    'reports: for report in reports.iter_mut() {
+        fn check(report: &[u8; 8]) -> bool {
+            let mut lt = None;
+            let mut index = 1;
+            let mut previous = report[0];
+
+            if previous == 255 {
+                index = 2;
+                previous = report[1];
+            }
+
+            while index < MAX_LEVELS {
+                let current = report[index];
+                if current == 255 {
+                    index += 1;
+                    continue;
+                } else if current == 0 {
+                    break;
+                }
+
+                if lt.is_none() {
+                    lt = Some(previous < current);
+                }
+
+                if !(if lt.unwrap() {
+                    previous < current
+                } else {
+                    previous > current
+                }) || !(1..=3).contains(&previous.abs_diff(current))
+                {
+                    return false;
+                }
+                index += 1;
+                previous = current;
+            }
+            true
+        }
+
+        if !check(report) {
+            let mut hold = 255u8;
+            for try_without_index in 0..8 {
+                if report[try_without_index] == 0 {
+                    break;
+                }
+                std::mem::swap(&mut report[try_without_index], &mut hold);
+                if check(report) {
+                    continue 'reports;
+                }
+                std::mem::swap(&mut report[try_without_index], &mut hold);
+            }
+            valid -= 1;
+        }
+    }
+
+    valid
+}
