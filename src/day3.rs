@@ -8,7 +8,7 @@ pub type Sum = u32;
 // Solution: 178886550
 // Best: 11 us
 #[aoc(day3, part1)]
-fn part1(input: &str) -> Sum {
+pub fn part1(input: &str) -> Sum {
     #[target_feature(enable = "avx2,bmi1,bmi2,cmpxchg16b,lzcnt,movbe,popcnt")]
     unsafe fn inner(input: &str) -> Sum {
         let input = input.as_bytes();
@@ -65,7 +65,7 @@ fn part1(input: &str) -> Sum {
 // Solution: 87163705
 // Best: 13 us
 #[aoc(day3, part2)]
-fn part2(input: &str) -> Sum {
+pub fn part2(input: &str) -> Sum {
     #[target_feature(enable = "avx2,bmi1,bmi2,cmpxchg16b,lzcnt,movbe,popcnt")]
     unsafe fn inner(input: &str) -> Sum {
         let input = input.as_bytes();
